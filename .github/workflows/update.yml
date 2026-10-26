@@ -22,6 +22,11 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Enable user namespaces for runtime sandbox
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 
       - name: Install Nix
         uses: cachix/install-nix-action@v30
@@ -34,9 +39,17 @@ jobs:
         id: updater
         run: python3 scripts/update.py
 
+      - name: Flake Check
+        if: steps.updater.outputs.has_update == 'true'
+        run: nix flake check --all-systems
+
       - name: Build and verify update if changed
         if: steps.updater.outputs.has_update == 'true'
         run: nix build .#default --impure --print-build-logs
+
+      - name: Run Runtime Smoke Test
+        if: steps.updater.outputs.has_update == 'true'
+        run: python3 scripts/check-smoke.py
 
       - name: Commit and Push Release
         if: steps.updater.outputs.has_update == 'true'
@@ -45,12 +58,15 @@ jobs:
           VERSION: ${{ steps.updater.outputs.version }}
           BUILD: ${{ steps.updater.outputs.build }}
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add pkgs/antigravity-ide/sources.json
           git commit -m "chore(release): bump Antigravity IDE to ${VERSION}"
-          git tag -a "v${VERSION}" -m "Release Antigravity IDE v${VERSION} (build ${BUILD})"
-          git push origin main --tags
+          if ! git rev-parse "v${VERSION}" >/dev/null 2>&1; then
+            git tag -a "v${VERSION}" -m "Release Antigravity IDE v${VERSION} (build ${BUILD})"
+          fi
+          git push origin HEAD:refs/heads/main --tags
 
       - name: Create GitHub Release
         if: steps.updater.outputs.has_update == 'true'

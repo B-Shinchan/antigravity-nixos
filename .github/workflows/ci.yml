@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   check:
-    name: Flake Check & Build
+    name: Flake Check & Runtime Smoke Test
     runs-on: ubuntu-24.04
     timeout-minutes: 60
     env:
@@ -20,6 +20,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Enable user namespaces for runtime sandbox
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 
       - name: Install Nix
         uses: cachix/install-nix-action@v30
@@ -33,3 +36,6 @@ jobs:
 
       - name: Build Antigravity IDE Package
         run: nix build .#default --impure --print-build-logs
+
+      - name: Run Runtime Smoke Test
+        run: python3 scripts/check-smoke.py

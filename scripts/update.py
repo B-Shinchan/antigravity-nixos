@@ -13,6 +13,8 @@ import json
 import os
 import re
 import sys
+import time
+import urllib.error
 import urllib.request
 import zlib
 from pathlib import Path
@@ -33,37 +35,50 @@ EDGE_PATTERN = re.compile(
 )
 
 
-def fetch_page(url: str) -> str:
-    req = urllib.request.Request(
-        url,
-        headers={
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:130.0) Gecko/20100101 Firefox/130.0",
-            "Accept-Encoding": "gzip, deflate",
-        },
-    )
-    with urllib.request.urlopen(req) as resp:
-        content = resp.read()
-        encoding = resp.info().get("Content-Encoding")
-        if encoding == "gzip":
-            content = gzip.decompress(content)
-        elif encoding == "deflate":
-            content = zlib.decompress(content)
-        return content.decode("utf-8", errors="replace")
+def fetch_page(url: str, max_retries: int = 3) -> str:
+    headers = {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:130.0) Gecko/20100101 Firefox/130.0",
+        "Accept-Encoding": "gzip, deflate",
+    }
+    for attempt in range(1, max_retries + 1):
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                content = resp.read()
+                encoding = resp.info().get("Content-Encoding")
+                if encoding == "gzip":
+                    content = gzip.decompress(content)
+                elif encoding == "deflate":
+                    content = zlib.decompress(content)
+                return content.decode("utf-8", errors="replace")
+        except (urllib.error.URLError, TimeoutError) as exc:
+            if attempt == max_retries:
+                raise RuntimeError(f"Failed to fetch {url} after {max_retries} attempts: {exc}")
+            time.sleep(2 ** attempt)
 
 
-def calculate_sri_hash(url: str) -> str:
+def calculate_sri_hash(url: str, max_retries: int = 3) -> str:
     print(f"Streaming and calculating SHA-256 for: {url}")
-    hasher = hashlib.sha256()
-    req = urllib.request.Request(
-        url,
-        headers={
-            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:130.0) Gecko/20100101 Firefox/130.0"
-        },
-    )
-    with urllib.request.urlopen(req) as resp:
-        while chunk := resp.read(1024 * 1024):
-            hasher.update(chunk)
-    return "sha256-" + base64.b64encode(hasher.digest()).decode("utf-8")
+    headers = {
+        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:130.0) Gecko/20100101 Firefox/130.0"
+    }
+    for attempt in range(1, max_retries + 1):
+        try:
+            hasher = hashlib.sha256()
+            req = urllib.request.Request(url, headers=headers)
+            bytes_read = 0
+            with urllib.request.urlopen(req, timeout=90) as resp:
+                while chunk := resp.read(1024 * 1024):
+                    hasher.update(chunk)
+                    bytes_read += len(chunk)
+            sri = "sha256-" + base64.b64encode(hasher.digest()).decode("utf-8")
+            print(f"  -> Successfully hashed ({bytes_read // (1024*1024)} MB): {sri}")
+            return sri
+        except (urllib.error.URLError, TimeoutError) as exc:
+            print(f"  [Attempt {attempt}/{max_retries}] Network error: {exc}. Retrying...")
+            if attempt == max_retries:
+                raise RuntimeError(f"Failed to stream and hash {url} after {max_retries} attempts: {exc}")
+            time.sleep(3 ** attempt)
 
 
 def get_latest_release():
@@ -75,8 +90,15 @@ def get_latest_release():
     # Find the version with the highest semver / build
     latest_version, latest_build = matches[0]
     for version, build in matches:
-        if tuple(map(int, version.split("."))) > tuple(map(int, latest_version.split("."))):
-            latest_version, latest_build = version, build
+        try:
+            v_tuple = tuple(map(int, version.split(".")))
+            latest_v_tuple = tuple(map(int, latest_version.split(".")))
+            if v_tuple > latest_v_tuple:
+                latest_version, latest_build = version, build
+            elif v_tuple == latest_v_tuple and int(build) > int(latest_build):
+                latest_version, latest_build = version, build
+        except ValueError:
+            continue
 
     return latest_version, latest_build
 
@@ -88,7 +110,10 @@ def update(dry_run: bool = False) -> bool:
 
     current_sources = {}
     if SOURCES_FILE.exists():
-        current_sources = json.loads(SOURCES_FILE.read_text())
+        try:
+            current_sources = json.loads(SOURCES_FILE.read_text())
+        except json.JSONDecodeError:
+            pass
 
     current_version = current_sources.get("version")
     current_build = current_sources.get("build")
@@ -100,7 +125,7 @@ def update(dry_run: bool = False) -> bool:
                 f.write("has_update=false\n")
         return False
 
-    print(f"New version found: {current_version} -> {latest_version}")
+    print(f"New version found: {current_version} -> {latest_version} (build {latest_build})")
 
     base_url = f"https://edgedl.me.gvt1.com/edgedl/release2/j0qc3/antigravity/stable/{latest_version}-{latest_build}"
     platforms_data = {}
