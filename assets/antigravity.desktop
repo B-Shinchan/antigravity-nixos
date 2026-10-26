@@ -1,0 +1,18 @@
+[Desktop Entry]
+Name=Antigravity IDE
+GenericName=Agentic Code Editor
+Comment=Google's Agent-First Development Environment Built on VS Code
+Exec=antigravity-ide %F
+Icon=antigravity
+Type=Application
+StartupNotify=true
+StartupWMClass=antigravity-ide
+Categories=Utility;TextEditor;Development;IDE;
+MimeType=x-scheme-handler/antigravity;x-scheme-handler/antigravity-ide;text/plain;inode/directory;
+Keywords=antigravity;google;ai;agent;vscode;code;editor;ide;
+Actions=new-empty-window;
+
+[Desktop Action new-empty-window]
+Name=New Empty Window
+Exec=antigravity-ide --new-window %F
+Icon=antigravity

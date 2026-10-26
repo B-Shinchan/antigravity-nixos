@@ -1,0 +1,59 @@
+name: Auto Update Upstream
+
+on:
+  schedule:
+    - cron: '0 */6 * * *' # Every 6 hours
+  workflow_dispatch:
+
+concurrency:
+  group: upstream-update
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    name: Check & Update Google Releases
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v30
+        with:
+          extra_nix_config: |
+            experimental-features = nix-command flakes
+
+      - name: Run Update Script
+        id: updater
+        run: python3 scripts/update.py
+
+      - name: Build and verify update if changed
+        if: steps.updater.outputs.has_update == 'true'
+        run: nix build .#default --print-build-logs
+
+      - name: Commit and Push Release
+        if: steps.updater.outputs.has_update == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.updater.outputs.version }}
+          BUILD: ${{ steps.updater.outputs.build }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pkgs/antigravity-ide/sources.json
+          git commit -m "chore(release): bump Antigravity IDE to ${VERSION}"
+          git tag -a "v${VERSION}" -m "Release Antigravity IDE v${VERSION} (build ${BUILD})"
+          git push origin main --tags
+
+      - name: Create GitHub Release
+        if: steps.updater.outputs.has_update == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: "v${{ steps.updater.outputs.version }}"
+          name: "Antigravity IDE v${{ steps.updater.outputs.version }}"
+          body: |
+            Automated release tracking official Google Antigravity IDE edge release `${{ steps.updater.outputs.version }}` (build `${{ steps.updater.outputs.build }}`).
