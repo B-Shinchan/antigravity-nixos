@@ -15,6 +15,8 @@ jobs:
     name: Flake Check & Build
     runs-on: ubuntu-24.04
     timeout-minutes: 60
+    env:
+      NIXPKGS_ALLOW_UNFREE: 1
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,9 +26,10 @@ jobs:
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
+            accept-flake-config = true
 
       - name: Check Nix Flake
         run: nix flake check --all-systems
 
       - name: Build Antigravity IDE Package
-        run: nix build .#default --print-build-logs
+        run: nix build .#default --impure --print-build-logs

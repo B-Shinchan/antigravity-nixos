@@ -11,7 +11,6 @@
       supportedSystems = [
         "x86_64-linux"
         "aarch64-linux"
-        "x86_64-darwin"
         "aarch64-darwin"
       ];
 
@@ -42,6 +41,9 @@
         default = {
           type = "app";
           program = "${self.packages.${system}.antigravity-ide}/bin/antigravity-ide";
+          meta = {
+            description = "Google Antigravity IDE";
+          };
         };
       });
 

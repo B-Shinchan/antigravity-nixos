@@ -17,6 +17,8 @@ jobs:
     name: Check & Update Google Releases
     runs-on: ubuntu-24.04
     timeout-minutes: 60
+    env:
+      NIXPKGS_ALLOW_UNFREE: 1
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,6 +28,7 @@ jobs:
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
+            accept-flake-config = true
 
       - name: Run Update Script
         id: updater
@@ -33,7 +36,7 @@ jobs:
 
       - name: Build and verify update if changed
         if: steps.updater.outputs.has_update == 'true'
-        run: nix build .#default --print-build-logs
+        run: nix build .#default --impure --print-build-logs
 
       - name: Commit and Push Release
         if: steps.updater.outputs.has_update == 'true'
