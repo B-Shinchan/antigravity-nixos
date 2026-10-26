@@ -28,6 +28,9 @@ jobs:
       - name: Enable user namespaces for runtime sandbox
         run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
 
+      - name: Install headless display test tools
+        run: sudo apt-get update && sudo apt-get install -y xvfb dbus-x11 xauth
+
       - name: Install Nix
         uses: cachix/install-nix-action@v30
         with:
@@ -49,7 +52,7 @@ jobs:
 
       - name: Run Runtime Smoke Test
         if: steps.updater.outputs.has_update == 'true'
-        run: python3 scripts/check-smoke.py
+        run: xvfb-run -a dbus-run-session --config-file=tests/dbus-session.conf -- python3 scripts/check-smoke.py
 
       - name: Commit and Push Release
         if: steps.updater.outputs.has_update == 'true'
