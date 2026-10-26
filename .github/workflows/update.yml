@@ -1,8 +1,14 @@
 name: Auto Update Upstream
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/update.yml
+      - scripts/**
+      - tests/**
   schedule:
-    - cron: '0 */6 * * *' # Every 6 hours
+    - cron: '47 */6 * * *' # Every 6 hours staggered (04:47, 10:47, 16:47, 22:47 UTC)
   workflow_dispatch:
 
 concurrency:
@@ -37,6 +43,9 @@ jobs:
           extra_nix_config: |
             experimental-features = nix-command flakes
             accept-flake-config = true
+
+      - name: Run Updater Unit Tests
+        run: python3 -m unittest discover -s tests -v
 
       - name: Run Update Script
         id: updater
