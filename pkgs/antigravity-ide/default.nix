@@ -78,10 +78,10 @@ let
     platforms = [
       "x86_64-linux"
       "aarch64-linux"
-      "x86_64-darwin"
       "aarch64-darwin"
     ];
     mainProgram = "antigravity-ide";
+    priority = 10;
   };
 
   darwinPkg = stdenv.mkDerivation {
