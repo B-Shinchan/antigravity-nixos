@@ -47,6 +47,18 @@
         };
       });
 
+      checks = forAllSystems (system: {
+        updater = nixpkgsFor.${system}.runCommand "updater-tests" {
+          nativeBuildInputs = [ nixpkgsFor.${system}.python3 ];
+        } ''
+          cp -r ${./tests} ./tests
+          cp -r ${./scripts} ./scripts
+          cp -r ${./pkgs} ./pkgs
+          python3 -m unittest discover -s tests -v
+          touch $out
+        '';
+      });
+
       nixosModules.default =
         {
           config,
