@@ -175,6 +175,7 @@ let
 
     appendRunpaths = [
       "${webkitgtk_4_1}/lib"
+      "${addDriverRunpath.driverLink}/lib"
     ];
 
     installPhase = ''
