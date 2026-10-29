@@ -38,7 +38,7 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y xvfb dbus-x11 xauth
 
       - name: Install Nix
-        uses: cachix/install-nix-action@v30
+        uses: cachix/install-nix-action@v31
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
