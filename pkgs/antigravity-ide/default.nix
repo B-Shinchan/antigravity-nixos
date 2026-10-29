@@ -188,13 +188,16 @@ let
       ln -s $out/lib/antigravity-ide/antigravity-ide $out/bin/antigravity-ide
 
       # Install desktop file
-      install -Dm644 ${../../assets/antigravity.desktop} $out/share/applications/antigravity-ide.desktop
+      install -Dm644 ${../../assets/antigravity-ide.desktop} $out/share/applications/antigravity-ide.desktop
       desktop-file-edit --set-key=Exec --set-value="antigravity-ide %F" $out/share/applications/antigravity-ide.desktop
 
       # Install icons
-      install -Dm644 ${../../assets/antigravity.png} $out/share/pixmaps/antigravity.png
-      install -Dm644 ${../../assets/antigravity.png} $out/share/icons/hicolor/1024x1024/apps/antigravity.png
-      install -Dm644 ${../../assets/antigravity.svg} $out/share/icons/hicolor/scalable/apps/antigravity.svg
+      install -Dm644 ${../../assets/antigravity.png} $out/share/pixmaps/antigravity-ide.png
+      ln -s antigravity-ide.png $out/share/pixmaps/antigravity.png
+      install -Dm644 ${../../assets/antigravity.png} $out/share/icons/hicolor/1024x1024/apps/antigravity-ide.png
+      ln -s antigravity-ide.png $out/share/icons/hicolor/1024x1024/apps/antigravity.png
+      install -Dm644 ${../../assets/antigravity.svg} $out/share/icons/hicolor/scalable/apps/antigravity-ide.svg
+      ln -s antigravity-ide.svg $out/share/icons/hicolor/scalable/apps/antigravity.svg
 
       # Register mime associations
       mkdir -p $out/share/mime/packages

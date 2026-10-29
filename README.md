@@ -140,7 +140,31 @@ You can easily overlay Antigravity IDE into `pkgs`:
 }
 ```
 
-This makes both `pkgs.antigravity-ide` and `pkgs.antigravity` available in standard package lists.
+This makes `pkgs.antigravity-ide` available in standard package lists.
+
+---
+
+## 🔍 Antigravity IDE vs. Antigravity Hub
+
+Google provides two distinct applications under the Antigravity brand:
+
+- **Google Antigravity IDE** (this repository): Google's agent-first code editor built on VS Code. Executable: `antigravity-ide`.
+- **Google Antigravity Hub**: Google's standalone agent orchestration mission control and command center. Executable: `antigravity-hub`. Packaged separately at [B-Shinchan/antigravity-hub-nixos](https://github.com/B-Shinchan/antigravity-hub-nixos).
+
+Both applications can be installed and executed simultaneously on the same machine without window, dock, or state collisions.
+
+---
+
+## 🤖 Companion Applications
+
+This package is part of a suite of official vendor AI applications packaged for NixOS:
+
+| Application | Command | Repository |
+| :--- | :--- | :--- |
+| **Google Antigravity IDE** | `antigravity-ide` | [antigravity-nixos](https://github.com/B-Shinchan/antigravity-nixos) |
+| **Google Antigravity Hub** | `antigravity-hub` | [antigravity-hub-nixos](https://github.com/B-Shinchan/antigravity-hub-nixos) |
+| **ChatGPT Desktop** | `chatgpt` | [chatgpt-desktop-nixos](https://github.com/B-Shinchan/chatgpt-desktop-nixos) |
+| **Claude Desktop** | `claude-desktop` | [claude-desktop-nixos](https://github.com/B-Shinchan/claude-desktop-nixos) |
 
 ---
 
@@ -155,7 +179,7 @@ antigravity-nixos/
 ├── assets/
 │   ├── antigravity.png       # 1024x1024 official high-resolution icon
 │   ├── antigravity.svg       # Vector icon
-│   └── antigravity.desktop   # FreeDesktop application desktop entry
+│   └── antigravity-ide.desktop   # FreeDesktop application desktop entry
 ├── pkgs/
 │   └── antigravity-ide/
 │       ├── default.nix       # Primary Nix expression (FHS sandbox wrapper)

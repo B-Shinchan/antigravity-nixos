@@ -3,7 +3,7 @@ Name=Antigravity IDE
 GenericName=Agentic Code Editor
 Comment=Google's Agent-First Development Environment Built on VS Code
 Exec=antigravity-ide %F
-Icon=antigravity
+Icon=antigravity-ide
 Type=Application
 StartupNotify=true
 StartupWMClass=antigravity-ide
@@ -15,4 +15,4 @@ Actions=new-empty-window;
 [Desktop Action new-empty-window]
 Name=New Empty Window
 Exec=antigravity-ide --new-window %F
-Icon=antigravity
+Icon=antigravity-ide
