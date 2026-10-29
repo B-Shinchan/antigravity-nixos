@@ -1,0 +1,27 @@
+name: Upstream Update Request
+description: Report that a new official upstream release of Google Antigravity IDE is available
+labels: ["upstream-update"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Google Antigravity IDE edge releases are polled automatically every 6 hours via GitHub Actions. If a release has been available on https://antigravity.google/download for more than 24 hours without a package release, please report it here.
+  - type: input
+    id: upstream_version
+    attributes:
+      label: New Upstream Version
+      placeholder: "e.g., 2.6.1"
+    validations:
+      required: true
+  - type: input
+    id: source_url
+    attributes:
+      label: Official Source Link
+      placeholder: "https://antigravity.google/download"
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Release Notes & Breaking Changes
+      description: Any notable changes in binary layout or language server dependencies?

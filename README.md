@@ -71,7 +71,7 @@ Add `antigravity-nixos` to your `/etc/nixos/flake.nix`:
         # OR Method B: Add directly to systemPackages
         # ({ pkgs, ... }: {
         #   environment.systemPackages = [
-        #     inputs.antigravity-nixos.packages.${pkgs.system}.default
+        #     inputs.antigravity-nixos.packages.${pkgs.stdenv.hostPlatform.system}.default
         #   ];
         # })
       ];
@@ -98,7 +98,7 @@ In your `home.nix`:
 {
   # Method A: Direct package inclusion
   home.packages = [
-    inputs.antigravity-nixos.packages.${pkgs.system}.default
+    inputs.antigravity-nixos.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 
   # OR Method B: Home Manager module
@@ -109,18 +109,18 @@ In your `home.nix`:
 
 ---
 
-### Option 3: Traditional Nix (Non-Flakes)
+### Option 3: Imperative Installation (Flakes)
 
-You can install `antigravity-ide` directly into your user environment without flakes:
+You can install `antigravity-ide` directly into your user profile:
 
 ```bash
-nix-env -i -f "https://github.com/B-Shinchan/antigravity-nixos/archive/main.tar.gz"
+nix profile install github:B-Shinchan/antigravity-nixos
 ```
 
-Or enter a temporary development shell:
+Or enter a temporary shell:
 
 ```bash
-nix-shell -p '(import (fetchTarball "https://github.com/B-Shinchan/antigravity-nixos/archive/main.tar.gz")).packages.x86_64-linux.default' --run antigravity-ide
+nix shell github:B-Shinchan/antigravity-nixos -c antigravity-ide
 ```
 
 ---
