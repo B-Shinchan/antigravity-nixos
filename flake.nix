@@ -28,13 +28,11 @@
     {
       overlays.default = final: prev: {
         antigravity-ide = final.callPackage ./pkgs/antigravity-ide { };
-        antigravity = final.antigravity-ide;
       };
 
       packages = forAllSystems (system: {
         default = nixpkgsFor.${system}.antigravity-ide;
         antigravity-ide = nixpkgsFor.${system}.antigravity-ide;
-        antigravity = nixpkgsFor.${system}.antigravity;
       });
 
       apps = forAllSystems (system: {

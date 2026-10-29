@@ -97,7 +97,6 @@ let
       mkdir -p "$out/Applications/Antigravity IDE.app" "$out/bin"
       cp -R "Antigravity IDE.app/." "$out/Applications/Antigravity IDE.app/"
       ln -s "$out/Applications/Antigravity IDE.app/Contents/Resources/app/bin/antigravity-ide" "$out/bin/antigravity-ide"
-      ln -s "$out/bin/antigravity-ide" "$out/bin/antigravity"
       runHook postInstall
     '';
   };
@@ -185,13 +184,12 @@ let
 
       cp -r ./* $out/lib/antigravity-ide/
 
-      # Install main binary and CLI launcher symlinks
+      # Install main binary
       ln -s $out/lib/antigravity-ide/antigravity-ide $out/bin/antigravity-ide
-      ln -s $out/bin/antigravity-ide $out/bin/antigravity
 
       # Install desktop file
-      install -Dm644 ${../../assets/antigravity.desktop} $out/share/applications/antigravity.desktop
-      desktop-file-edit --set-key=Exec --set-value="antigravity-ide %F" $out/share/applications/antigravity.desktop
+      install -Dm644 ${../../assets/antigravity.desktop} $out/share/applications/antigravity-ide.desktop
+      desktop-file-edit --set-key=Exec --set-value="antigravity-ide %F" $out/share/applications/antigravity-ide.desktop
 
       # Install icons
       install -Dm644 ${../../assets/antigravity.png} $out/share/pixmaps/antigravity.png
@@ -288,7 +286,6 @@ let
       ln -s ${linuxUnwrapped}/share/pixmaps/* $out/share/pixmaps/
       ln -s ${linuxUnwrapped}/share/icons/* $out/share/icons/
       ln -s ${linuxUnwrapped}/share/mime/* $out/share/mime/
-      ln -s $out/bin/antigravity-ide $out/bin/antigravity
     '';
 
     runScript = "antigravity-ide";
