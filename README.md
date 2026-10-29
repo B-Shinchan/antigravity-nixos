@@ -1,19 +1,16 @@
-# Google Antigravity IDE on NixOS & Flakes
+<div align="center">
+  <img src="./assets/antigravity.png" alt="Google Antigravity IDE Logo" width="128" height="128" />
+  <h1>Google Antigravity IDE on NixOS</h1>
+  <p>Production-grade Nix packaging of Google's agent-first development environment built on VS Code</p>
 
-<p align="center">
-  <img src="assets/antigravity.png" alt="Google Antigravity IDE" width="128" height="128">
-</p>
-
-<p align="center">
-  <strong>Production-grade Nix packaging of Google's agent-first development environment built on VS Code.</strong>
-</p>
-
-<p align="center">
-  <a href="https://github.com/B-Shinchan/antigravity-nixos/actions/workflows/ci.yml"><img src="https://github.com/B-Shinchan/antigravity-nixos/actions/workflows/ci.yml/badge.svg" alt="CI Status"></a>
-  <a href="https://github.com/B-Shinchan/antigravity-nixos/releases"><img src="https://img.shields.io/github/v/release/B-Shinchan/antigravity-nixos?include_prereleases&sort=semver&logo=google" alt="Latest Release"></a>
-  <a href="https://builtwithnix.org"><img src="https://builtwithnix.org/badge.svg" alt="Built With Nix"></a>
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue.svg" alt="License"></a>
-</p>
+  <p>
+    <a href="https://github.com/B-Shinchan/antigravity-nixos/actions/workflows/ci.yml"><img src="https://github.com/B-Shinchan/antigravity-nixos/actions/workflows/ci.yml/badge.svg" alt="CI Status" /></a>
+    <a href="https://github.com/B-Shinchan/antigravity-nixos/actions/workflows/update.yml"><img src="https://github.com/B-Shinchan/antigravity-nixos/actions/workflows/update.yml/badge.svg" alt="Upstream Update" /></a>
+    <a href="https://nixos.org"><img src="https://img.shields.io/badge/Nix_Flake-blue?logo=nixos&logoColor=white" alt="Nix Flake" /></a>
+    <a href="https://wayland.freedesktop.org/"><img src="https://img.shields.io/badge/Wayland-Ready-green?logo=wayland&logoColor=white" alt="Wayland Ready" /></a>
+    <a href="./LICENSE"><img src="https://img.shields.io/badge/license-Apache--2.0-blue.svg" alt="License" /></a>
+  </p>
+</div>
 
 ---
 
