@@ -19,7 +19,7 @@ jobs:
       NIXPKGS_ALLOW_UNFREE: 1
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Enable user namespaces for runtime sandbox
         run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
